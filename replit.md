@@ -1,36 +1,46 @@
-# [Project name]
+# Aura — AI Chatbot
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A personal AI chatbot powered by OpenAI GPT. Clean, warm chat interface with conversation history, real-time streaming responses, and markdown rendering.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
+- `pnpm --filter @workspace/chatbot run dev` — run the frontend (port auto-assigned)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
+- Required env: `OPENAI_API_KEY` — OpenAI API key (server-side only)
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
+- Frontend: React + Vite + Tailwind CSS + shadcn/ui
+- API: Express 5 with streaming SSE for chat
+- DB: PostgreSQL + Drizzle ORM (conversations + messages tables)
+- AI: OpenAI GPT-4o-mini via streaming completions
 - Validation: Zod (`zod/v4`), `drizzle-zod`
 - API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/chatbot/src/` — React frontend
+  - `components/chat-content.tsx` — main chat area with SSE streaming
+  - `components/sidebar.tsx` — conversation list sidebar
+  - `pages/chat.tsx` — page layout
+- `artifacts/api-server/src/routes/conversations.ts` — all chat API routes + OpenAI streaming
+- `lib/db/src/schema/conversations.ts` — conversations table
+- `lib/db/src/schema/messages.ts` — messages table
+- `lib/api-spec/openapi.yaml` — API contract (source of truth)
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
-
-## Product
-
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Messages sent via raw SSE fetch (not generated hooks) — Orval can't codegen streaming endpoints
+- OpenAI API key used server-side only — never exposed to frontend
+- Conversations auto-titled from first message content
+- `gpt-4o-mini` model for cost-efficiency on streaming completions
+- Messages stored in DB for persistent history across sessions
 
 ## User preferences
 
@@ -38,8 +48,5 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- After OpenAPI spec changes, run `pnpm --filter @workspace/api-spec run codegen` then `pnpm run typecheck:libs`
+- SSE streaming uses `text/event-stream` — Express body size limit doesn't apply but audio payloads need adjustment
