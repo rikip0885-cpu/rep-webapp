@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "bfl-api": {
+      "source": "black-forest-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/bfl-api/SKILL.md",
+      "computedHash": "7430007e565124d14117d9aaf7d86eea80117086f1b6f098b71a2ba6c25d3e04"
+    },
     "chainlink-ace-skill": {
       "source": "smartcontractkit/chainlink-agent-skills",
       "sourceType": "github",
@@ -42,6 +48,12 @@
       "sourceType": "github",
       "skillPath": "chainlink-vrf-skill/SKILL.md",
       "computedHash": "321e2a352bc00d9f423737a2194807774ee7669c64b6da9a73e8d2ffb95c42d4"
+    },
+    "flux-best-practices": {
+      "source": "black-forest-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flux-best-practices/SKILL.md",
+      "computedHash": "8e6def03f1cde7d5900849d65773832af39174be8243d27715c148f901e2d649"
     }
   }
 }
